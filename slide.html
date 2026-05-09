@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Visualizer - Design Philosophy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #080c18;
+            --text-primary: #e8ecf4;
+            --text-secondary: #7b8ba7;
+            --accent-blue: #4f8ef7;
+            --accent-purple: #a855f7;
+            --accent-cyan: #38bdf8;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        .slides {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .slides::-webkit-scrollbar {
+            height: 8px;
+        }
+        .slides::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05); 
+        }
+        .slides::-webkit-scrollbar-thumb {
+            background: var(--accent-blue); 
+            border-radius: 4px;
+        }
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            box-sizing: border-box;
+            text-align: center;
+            position: relative;
+        }
+        .slide:nth-child(even) {
+            background: rgba(20, 28, 50, 0.4);
+        }
+        h1 {
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 3rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+        p, li {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 800px;
+        }
+        ul {
+            text-align: left;
+            margin-top: 1rem;
+        }
+        li {
+            margin-bottom: 1.2rem;
+        }
+        strong {
+            color: var(--text-primary);
+        }
+        .nav-hint {
+            position: absolute;
+            bottom: 3rem;
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            opacity: 0.8;
+            animation: bounceRight 2s infinite;
+        }
+        @keyframes bounceRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="slides">
+        <div class="slide">
+            <h1>Algorithm Visualizer</h1>
+            <p>Design Philosophy & Overview</p>
+            <div class="nav-hint">Scroll Right →</div>
+        </div>
+        <div class="slide">
+            <h2>What is this site for?</h2>
+            <p>
+                A web application designed to help users <strong>visually and auditorily</strong> understand how algorithms work. 
+                <br><br>
+                Instead of just reading code, users can <strong>experience the world of sorting</strong> (like Bubble Sort and Quick Sort) with their eyes and ears.
+            </p>
+        </div>
+        <div class="slide">
+            <h2>Design Adopted: Core Aesthetic</h2>
+            <ul>
+                <li><strong>Modern & Premium:</strong> Utilizes a dark theme with glassmorphism (frosted glass) effects on control panels.</li>
+                <li><strong>Typography:</strong> Clean, modern 'Inter' font. Gradients applied to typography for a vibrant, high-tech feel.</li>
+                <li><strong>Colors:</strong> Deep background contrasting with bright neon accents (cyan, blue, purple) to draw focus to interactive elements.</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h2>Design Adopted: UX & Visualization</h2>
+            <ul>
+                <li><strong>Auditory Feedback:</strong> Emits electronic sounds corresponding to data values during swapping, providing a multi-sensory experience.</li>
+                <li><strong>Rainbow Gradient Data:</strong> Array bars are colored with a value-based rainbow gradient, forming a beautiful spectrum as sorting completes.</li>
+                <li><strong>Interactive Highlighting:</strong> Clear visual cues during algorithm execution (Yellow for comparing, Red for swapping).</li>
+                <li><strong>Rewarding Completion:</strong> A satisfying sweep animation light-up sequence plays upon sorting completion.</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h2>Summary</h2>
+            <p>
+                The project goes beyond a simple tool. It combines <strong>modern web aesthetics, rich interactivity, and multi-sensory feedback</strong> to turn a complex computer science subject into an engaging, premium experience.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
