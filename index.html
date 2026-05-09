@@ -38,9 +38,28 @@
                 <input type="range" id="speed" class="control-range" min="1" max="100" value="50">
             </div>
 
+            <div class="control-group">
+                <label for="csv-column" class="control-label">データ列 (CSV)</label>
+                <select id="csv-column" class="control-select">
+                    <option value="">読込中...</option>
+                </select>
+            </div>
+
             <div class="control-buttons">
+                <button id="load-csv-btn" class="btn btn--secondary" disabled>CSV読込</button>
                 <button id="reset-btn" class="btn btn--secondary">リセット</button>
                 <button id="start-btn" class="btn btn--primary">▶ ソート開始</button>
+            </div>
+        </section>
+
+        <!-- CSV Preview -->
+        <section id="csv-preview-container" class="csv-preview" style="display: none;">
+            <div class="csv-preview__header">
+                <h2 class="csv-preview__title">Data Preview (First 5 Rows)</h2>
+                <button id="close-preview-btn" class="btn btn--icon" aria-label="閉じる">✕</button>
+            </div>
+            <div class="csv-preview__table-wrapper">
+                <table id="csv-table" class="csv-table"></table>
             </div>
         </section>
 
