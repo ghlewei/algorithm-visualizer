@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="バブルソートとクイックソートの動作を視覚的・聴覚的に体験できるアルゴリズム可視化システム">
+    <title>Algorithm Visualizer — ソートの世界を体感しよう</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header__title">Algorithm Visualizer</h1>
+            <p class="header__subtitle">ソートの世界を、目と耳で体感しよう</p>
+        </header>
+
+        <!-- Controls -->
+        <section class="controls" aria-label="コントロールパネル">
+            <div class="control-group">
+                <label for="algorithm" class="control-label">アルゴリズム</label>
+                <select id="algorithm" class="control-select">
+                    <option value="bubble">バブルソート</option>
+                    <option value="quick">クイックソート</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="array-size" class="control-label">データ数: <span id="size-value">2000</span></label>
+                <input type="range" id="array-size" class="control-range" min="1000" max="10000" value="2000" step="100">
+            </div>
+
+            <div class="control-group">
+                <label for="speed" class="control-label">速度: <span id="speed-value">50</span></label>
+                <input type="range" id="speed" class="control-range" min="1" max="100" value="50">
+            </div>
+
+            <div class="control-buttons">
+                <button id="reset-btn" class="btn btn--secondary">リセット</button>
+                <button id="start-btn" class="btn btn--primary">▶ ソート開始</button>
+            </div>
+        </section>
+
+        <!-- Visualization -->
+        <main class="visualizer">
+            <canvas id="canvas"></canvas>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
