@@ -3,24 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algorithm Visualizer - Design Philosophy</title>
+    <title>Algorithm Visualizer - デザイン思想</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #080c18;
-            --text-primary: #e8ecf4;
-            --text-secondary: #7b8ba7;
+            --bg-deep: #030711;
+            --text-primary: #eef4ff;
+            --text-secondary: #a9b7d3;
             --accent-blue: #4f8ef7;
-            --accent-purple: #a855f7;
-            --accent-cyan: #38bdf8;
+            --accent-purple: #9f7cff;
+            --accent-cyan: #69d6ff;
         }
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(98, 179, 255, 0.18), transparent 22%),
+                radial-gradient(circle at 80% 18%, rgba(159, 124, 255, 0.14), transparent 24%),
+                radial-gradient(circle at 50% 75%, rgba(75, 122, 255, 0.12), transparent 30%),
+                linear-gradient(180deg, #02040a 0%, #07111f 45%, #0a1630 100%);
             color: var(--text-primary);
             overflow-x: hidden;
             overflow-y: hidden;
+            position: relative;
+        }
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+        body::before {
+            background-image:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.95) 0 1px, transparent 1.8px),
+                radial-gradient(circle at 26% 72%, rgba(255, 255, 255, 0.8) 0 1.2px, transparent 2px),
+                radial-gradient(circle at 38% 28%, rgba(105, 214, 255, 0.9) 0 1px, transparent 2px),
+                radial-gradient(circle at 52% 84%, rgba(255, 255, 255, 0.75) 0 1px, transparent 1.8px),
+                radial-gradient(circle at 64% 24%, rgba(255, 255, 255, 0.9) 0 1.2px, transparent 2px),
+                radial-gradient(circle at 78% 66%, rgba(159, 124, 255, 0.8) 0 1px, transparent 2px),
+                radial-gradient(circle at 88% 14%, rgba(255, 255, 255, 0.85) 0 1px, transparent 2px),
+                radial-gradient(circle at 92% 78%, rgba(105, 214, 255, 0.75) 0 1.1px, transparent 2px);
+            opacity: 0.85;
+        }
+        body::after {
+            background:
+                radial-gradient(circle at center, transparent 0%, rgba(2, 4, 10, 0.08) 55%, rgba(2, 4, 10, 0.32) 100%);
         }
         .slides {
             display: flex;
@@ -55,7 +83,7 @@
             position: relative;
         }
         .slide:nth-child(even) {
-            background: rgba(20, 28, 50, 0.4);
+            background: rgba(12, 20, 38, 0.24);
         }
         h1 {
             font-size: 4rem;
@@ -64,18 +92,24 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
             line-height: 1.2;
+            filter: drop-shadow(0 0 10px rgba(105, 214, 255, 0.18));
+            text-shadow: 0 0 24px rgba(105, 214, 255, 0.12);
         }
         h2 {
             font-size: 3rem;
             color: var(--accent-cyan);
             margin-bottom: 2rem;
             line-height: 1.2;
+            text-shadow:
+                0 0 10px rgba(105, 214, 255, 0.22),
+                0 0 24px rgba(79, 142, 247, 0.12);
         }
         p, li {
             font-size: 1.5rem;
             color: var(--text-secondary);
             line-height: 1.6;
             max-width: 800px;
+            text-shadow: 0 0 12px rgba(169, 183, 211, 0.08);
         }
         ul {
             text-align: left;
@@ -84,8 +118,19 @@
         li {
             margin-bottom: 1.2rem;
         }
+        .compact-list li {
+            font-size: 1.25rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+            max-width: 980px;
+        }
+        .compact-text {
+            font-size: 1.25rem;
+            max-width: 980px;
+        }
         strong {
             color: var(--text-primary);
+            text-shadow: 0 0 12px rgba(238, 244, 255, 0.12);
         }
         .nav-hint {
             position: absolute;
@@ -94,6 +139,7 @@
             color: var(--accent-cyan);
             opacity: 0.8;
             animation: bounceRight 2s infinite;
+            text-shadow: 0 0 10px rgba(105, 214, 255, 0.25);
         }
         @keyframes bounceRight {
             0%, 100% { transform: translateX(0); }
@@ -105,38 +151,76 @@
     <div class="slides">
         <div class="slide">
             <h1>Algorithm Visualizer</h1>
-            <p>Design Philosophy & Overview</p>
-            <div class="nav-hint">Scroll Right →</div>
+            <p>デザイン思想と概要</p>
+            <div class="nav-hint">右へスクロール →</div>
         </div>
         <div class="slide">
-            <h2>What is this site for?</h2>
+            <h2>このサイトの目的</h2>
             <p>
-                A web application designed to help users <strong>visually and auditorily</strong> understand how algorithms work. 
+                アルゴリズムの動作を、ユーザーが<strong>視覚的・聴覚的</strong>に理解できるよう設計されたWebアプリケーションです。
                 <br><br>
-                Instead of just reading code, users can <strong>experience the world of sorting</strong> (like Bubble Sort and Quick Sort) with their eyes and ears.
+                単にコードを読むだけではなく、バブルソートやクイックソートなどの<strong>ソートアルゴリズムの世界を体験</strong>できます。
             </p>
         </div>
         <div class="slide">
-            <h2>Design Adopted: Core Aesthetic</h2>
+            <h2>採用したデザイン：コアデザイン</h2>
             <ul>
-                <li><strong>Modern & Premium:</strong> Utilizes a dark theme with glassmorphism (frosted glass) effects on control panels.</li>
-                <li><strong>Typography:</strong> Clean, modern 'Inter' font. Gradients applied to typography for a vibrant, high-tech feel.</li>
-                <li><strong>Colors:</strong> Deep background contrasting with bright neon accents (cyan, blue, purple) to draw focus to interactive elements.</li>
+                <li><strong>モダン & プレミアム:</strong> ダークテーマをベースに、コントロールパネルへグラスモーフィズム（すりガラス風）表現を採用。</li>
+                <li><strong>タイポグラフィ:</strong> 洗練された「Inter」フォントを使用。文字にはグラデーションを適用し、近未来感を演出。</li>
+                <li><strong>カラー設計:</strong> 深い背景色と、シアン・ブルー・パープルのネオンアクセントでインタラクションを強調。</li>
             </ul>
         </div>
         <div class="slide">
-            <h2>Design Adopted: UX & Visualization</h2>
+            <h2>採用したデザイン：UXと可視化</h2>
             <ul>
-                <li><strong>Auditory Feedback:</strong> Emits electronic sounds corresponding to data values during swapping, providing a multi-sensory experience.</li>
-                <li><strong>Rainbow Gradient Data:</strong> Array bars are colored with a value-based rainbow gradient, forming a beautiful spectrum as sorting completes.</li>
-                <li><strong>Interactive Highlighting:</strong> Clear visual cues during algorithm execution (Yellow for comparing, Red for swapping).</li>
-                <li><strong>Rewarding Completion:</strong> A satisfying sweep animation light-up sequence plays upon sorting completion.</li>
+                <li><strong>聴覚フィードバック:</strong> 要素の交換時にデータ値に応じた電子音を再生し、マルチセンシングな体験を提供。</li>
+                <li><strong>レインボーグラデーション:</strong> 配列バーを値に応じた虹色グラデーションで描画し、ソート完了時に美しいスペクトラムを形成。</li>
+                <li><strong>インタラクティブな強調表示:</strong> アルゴリズム実行中の比較・交換を色で明確に可視化（比較：黄色、交換：赤）。</li>
+                <li><strong>達成感のある演出:</strong> ソート完了時にはライトアップ演出が流れ、達成感を演出。</li>
             </ul>
         </div>
         <div class="slide">
-            <h2>Summary</h2>
+            <h2>機能要件</h2>
+            <ul class="compact-list">
+                <li><strong>アルゴリズム選択:</strong> バブルソートとクイックソートを切り替えて比較できます。</li>
+                <li><strong>データ生成・読込:</strong> ランダムデータ生成に加え、`test.csv` から列を選んで数値データを可視化できます。</li>
+                <li><strong>再生制御:</strong> 開始・停止・リセットと速度変更により、学習者の理解速度に合わせて観察できます。</li>
+                <li><strong>可視化フィードバック:</strong> 比較中・交換中の色分け、値に応じたバー配色、交換時サウンドを提供します。</li>
+                <li><strong>完了演出:</strong> ソート完了後にスウィープアニメーションを流し、結果を明確に伝えます。</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h2>非機能要件</h2>
+            <ul class="compact-list">
+                <li><strong>レスポンシブ対応:</strong> PC とスマートフォンの両方で操作と閲覧が可能です。</li>
+                <li><strong>滑らかな動作:</strong> HTML / CSS / JavaScript によるアニメーションが途切れず追えることを重視しています。</li>
+                <li><strong>大量データへの対応:</strong> 配列要素数は最大 10000 まで扱い、学習用途と負荷の両立を図ります。</li>
+                <li><strong>一貫した操作性:</strong> データ選択、速度変更、リセットが実行中でも直感的に使える構成にしています。</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h2>`test.csv` の説明</h2>
+            <p class="compact-text">
+                `test.csv` は Titanic 形式のサンプルデータセットです。`PassengerId`、`Age`、`Fare` など複数列を持ち、
+                アプリでは <strong>選択した列から数値データだけを抽出</strong>して棒グラフへ変換します。
+                これにより、ランダム配列だけでなく<strong>実データを使ったソート可視化</strong>が可能になります。
+            </p>
+        </div>
+        <div class="slide">
+            <h2>テスト観点</h2>
+            <ul class="compact-list">
+                <li><strong>初期表示:</strong> ページロード時にデフォルト配列とコントロールが正常に表示されること。</li>
+                <li><strong>ソート処理:</strong> アルゴリズム選択後、開始でアニメーションと並び替え結果が正しく反映されること。</li>
+                <li><strong>操作反映:</strong> リセットや速度変更が実行中でも即時に反映されること。</li>
+                <li><strong>演出確認:</strong> 虹色グラデーション、比較・交換ハイライト、完了時スウィープが仕様どおり動作すること。</li>
+                <li><strong>CSV 利用:</strong> `test.csv` のプレビュー表示、列選択、非数値データを含む列への警告が正しく機能すること。</li>
+            </ul>
+        </div>
+        <div class="slide">
+            <h2>まとめ</h2>
             <p>
-                The project goes beyond a simple tool. It combines <strong>modern web aesthetics, rich interactivity, and multi-sensory feedback</strong> to turn a complex computer science subject into an engaging, premium experience.
+                このプロジェクトは単なるツールではありません。
+                <strong>モダンなWebデザイン、高いインタラクション性、そしてマルチセンシングなフィードバック</strong>を融合し、難解なコンピュータサイエンスを魅力的で上質な体験へと変えています。
             </p>
         </div>
     </div>
