@@ -20,11 +20,19 @@ const sizeLabel = document.getElementById('size-value');
 const speedLabel = document.getElementById('speed-value');
 const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
+const csvColumnSelect = document.getElementById('csv-column');
+const loadCsvBtn = document.getElementById('load-csv-btn');
+const csvPreviewContainer = document.getElementById('csv-preview-container');
+const csvTable = document.getElementById('csv-table');
+const closePreviewBtn = document.getElementById('close-preview-btn');
 
 // ──────────────────────────────────────────
 // State
 // ──────────────────────────────────────────
 let array = [];
+let arrayMax = 1;
+let csvRawData = [];
+let isCsvMode = false;
 let isSorting = false;
 let stopRequested = false;
 let audioCtx = null;
@@ -77,12 +85,12 @@ function resizeCanvas() {
 }
 
 /** Return an HSL color string. Hue mapped 0°–300° (red → magenta). */
-function barHue(value, n) {
-    return (value / n) * 300;
+function barHue(value, maxVal) {
+    return (value / maxVal) * 300;
 }
 
-function barColor(value, n) {
-    return `hsl(${barHue(value, n)}, 85%, 55%)`;
+function barColor(value, maxVal) {
+    return `hsl(${barHue(value, maxVal)}, 85%, 55%)`;
 }
 
 /**
@@ -99,7 +107,7 @@ function render(highlights = {}) {
     ctx.clearRect(0, 0, w, h);
 
     for (let i = 0; i < n; i++) {
-        const barH = (array[i] / n) * h;
+        const barH = (array[i] / arrayMax) * h;
 
         if (swap.includes(i)) {
             // Swap highlight — red with glow
@@ -109,7 +117,7 @@ function render(highlights = {}) {
             ctx.fillStyle = '#ffdd44';
         } else {
             // Default — rainbow gradient based on value
-            ctx.fillStyle = barColor(array[i], n);
+            ctx.fillStyle = barColor(array[i], arrayMax);
         }
 
         ctx.fillRect(
@@ -131,6 +139,10 @@ function generateArray(size) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+    arrayMax = size;
+    isCsvMode = false;
+    sizeSlider.disabled = false;
+    sizeLabel.textContent = size;
 }
 
 // ──────────────────────────────────────────
@@ -221,14 +233,14 @@ async function sweepAnimation() {
 
         ctx.clearRect(0, 0, w, h);
         for (let i = 0; i < n; i++) {
-            const barH = (array[i] / n) * h;
+            const barH = (array[i] / arrayMax) * h;
 
             if (i < swept) {
                 // Swept — brighter, glowing version of rainbow
-                const hue = barHue(array[i], n);
+                const hue = barHue(array[i], arrayMax);
                 ctx.fillStyle = `hsl(${hue}, 100%, 72%)`;
             } else {
-                ctx.fillStyle = barColor(array[i], n);
+                ctx.fillStyle = barColor(array[i], arrayMax);
             }
 
             ctx.fillRect(
@@ -240,7 +252,7 @@ async function sweepAnimation() {
         }
 
         // Ascending tone during sweep
-        playTone(array[Math.min(swept - 1, n - 1)], n, 0.04);
+        playTone(array[Math.min(swept - 1, n - 1)], arrayMax, 0.04);
 
         await new Promise(resolve => requestAnimationFrame(resolve));
     }
@@ -301,7 +313,7 @@ async function runSort() {
 
         // Play sound for the last swap in this batch
         if (soundValue !== null) {
-            playTone(soundValue, array.length);
+            playTone(soundValue, arrayMax);
         }
 
         await new Promise(resolve => requestAnimationFrame(resolve));
@@ -315,12 +327,152 @@ async function runSort() {
 }
 
 // ──────────────────────────────────────────
+// CSV Handling
+// ──────────────────────────────────────────
+function parseCSVLine(line) {
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(cur.trim());
+            cur = '';
+        } else {
+            cur += char;
+        }
+    }
+    result.push(cur.trim());
+    return result;
+}
+
+async function fetchAndParseCSV() {
+    try {
+        const response = await fetch('test.csv');
+        const text = await response.text();
+        const lines = text.trim().split(/\r?\n/);
+        
+        if (lines.length > 0) {
+            csvRawData = lines.map(parseCSVLine);
+            const headers = csvRawData[0];
+            
+            csvColumnSelect.innerHTML = '';
+            headers.forEach((header, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = header;
+                if (header.toLowerCase() === 'age') {
+                    option.selected = true;
+                }
+                csvColumnSelect.appendChild(option);
+            });
+            loadCsvBtn.disabled = false;
+        }
+    } catch (err) {
+        console.error('Failed to load CSV:', err);
+        csvColumnSelect.innerHTML = '<option value="">Error Loading CSV</option>';
+    }
+}
+
+function renderCSVTable() {
+    csvTable.innerHTML = '';
+    if (csvRawData.length === 0) return;
+    
+    // Header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    csvRawData[0].forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    csvTable.appendChild(thead);
+    
+    // Body (first 5 rows)
+    const tbody = document.createElement('tbody');
+    for (let i = 1; i <= Math.min(5, csvRawData.length - 1); i++) {
+        const tr = document.createElement('tr');
+        csvRawData[i].forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    }
+    csvTable.appendChild(tbody);
+    csvPreviewContainer.style.display = 'block';
+}
+
+function loadCSVData() {
+    if (csvRawData.length < 2) return;
+    
+    const colIndex = parseInt(csvColumnSelect.value);
+    const colName = csvRawData[0][colIndex];
+    let newArray = [];
+    let numericSum = 0;
+    let numericCount = 0;
+    let hasNonNumeric = false;
+    
+    // Extract column
+    for (let i = 1; i < csvRawData.length; i++) {
+        const valStr = csvRawData[i][colIndex];
+        if (valStr !== '' && valStr !== undefined) {
+            const valNum = Number(valStr);
+            if (isNaN(valNum)) {
+                hasNonNumeric = true;
+            } else {
+                numericSum += valNum;
+                numericCount++;
+            }
+        }
+    }
+    
+    if (hasNonNumeric) {
+        alert(`Warning: The column "${colName}" contains non-numeric data. These will be treated as missing values or could cause issues.`);
+    }
+    
+    const mean = numericCount > 0 ? numericSum / numericCount : 0;
+    
+    // Impute and build array
+    for (let i = 1; i < csvRawData.length; i++) {
+        const valStr = csvRawData[i][colIndex];
+        if (valStr === '' || valStr === undefined) {
+            newArray.push(mean);
+        } else {
+            const valNum = Number(valStr);
+            newArray.push(isNaN(valNum) ? mean : valNum);
+        }
+    }
+    
+    if (isSorting) {
+        stopRequested = true;
+    }
+    
+    setTimeout(() => {
+        array = newArray;
+        arrayMax = Math.max(1, ...array);
+        isCsvMode = true;
+        sizeSlider.disabled = true;
+        sizeLabel.textContent = `${array.length} (CSV)`;
+        renderCSVTable();
+        resizeCanvas();
+        render();
+        startBtn.textContent = '▶ ソート開始';
+    }, 50);
+}
+
+// ──────────────────────────────────────────
 // UI Helpers
 // ──────────────────────────────────────────
 function lockControls(locked) {
-    sizeSlider.disabled = locked;
+    sizeSlider.disabled = isCsvMode ? true : locked;
     algorithmSelect.disabled = locked;
     startBtn.disabled = locked;
+    loadCsvBtn.disabled = locked;
+    csvColumnSelect.disabled = locked;
 }
 
 function resetArray() {
@@ -365,6 +517,14 @@ resetBtn.addEventListener('click', () => {
     resetArray();
 });
 
+loadCsvBtn.addEventListener('click', () => {
+    loadCSVData();
+});
+
+closePreviewBtn.addEventListener('click', () => {
+    csvPreviewContainer.style.display = 'none';
+});
+
 window.addEventListener('resize', () => {
     resizeCanvas();
     render();
@@ -376,6 +536,7 @@ window.addEventListener('resize', () => {
 (function init() {
     const size = parseInt(sizeSlider.value);
     generateArray(size);
+    fetchAndParseCSV();
     resizeCanvas();
     render();
 })();
